@@ -27,6 +27,13 @@ function mailgun_admin_settings($form, &$form_state) {
     '#required' => TRUE,
   );
 
+  $form['mailgun_fallback_domain'] = array(
+    '#title' => t('Fallback domain'),
+    '#type' => 'textfield',
+    '#description' => t('The email is normally sent using the Mailgun domain that matches the sender\'s email address. You can specify a fallback domain that will be used if there is no match. This can be useful for using a sandbox domain during development.'),
+    '#default_value' => variable_get('mailgun_fallback_domain'),
+  );
+
   // Display settings only when a valid API key is present.
   if (!empty($key)) {
     $form['mailgun_queue'] = array(

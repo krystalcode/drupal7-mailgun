@@ -167,12 +167,9 @@ function mailgun_send($mailgun_message) {
     watchdog('mailgun', 'An exception occurred while retrieving domains. @code: @message', array('@code' => $e->getCode(), '@message' => $e->getMessage()), WATCHDOG_ERROR);
   }
 
-  if (empty($domains)) {
-    // No domain available. Although this shouldn't happen, doesn't hurt to check.
-    return FALSE;
-  }
-
-  // Now, we need to get the working domain. This is generally the domain the From address is on or the root domain of it.
+  // Now, we need to get the working domain. This is generally the domain the
+  // From address is on or the root domain of it.
+  $working_domain = '';
   if ($key = array_search($mail_domain, $domains) !== FALSE) {
     // Great. Found it.
     $working_domain = $mail_domain;
@@ -185,6 +182,15 @@ function mailgun_send($mailgun_message) {
         $working_domain = $domain;
         break;
       }
+    }
+  }
+
+  // If there is no matching domain, check if there is a fallback domain
+  // defined.
+  if (empty($working_domain)) {
+    $fallback_domain = variable_get('mailgun_fallback_domain');
+    if ($fallback_domain) {
+      $working_domain = $fallback_domain;
     }
   }
 
