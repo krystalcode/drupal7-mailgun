@@ -157,7 +157,23 @@ function mailgun_send($mailgun_message) {
     $result = $client->get('domains');
     if ($result->http_response_code == 200) {
       foreach ($result->http_response_body->items as $item) {
-        $domains[$item->name] = $item->name;
+        /**
+         * @Issue(
+         *   "Add a configuration option that prevents from sending to sandbox
+         *   domains"
+         *   type="improvement"
+         *   priority="low"
+         * )
+         * @Issue(
+         *   "Log an error if there are no domains available, taking into
+         *   account the 'sandbox' option"
+         *   type="bug"
+         *   priority="low"
+         * )
+         */
+        if ($item->state == 'active') {
+          $domains[$item->name] = $item->name;
+        }
       }
     }
     else {
@@ -190,6 +206,13 @@ function mailgun_send($mailgun_message) {
   if (empty($working_domain)) {
     $fallback_domain = variable_get('mailgun_fallback_domain');
     if ($fallback_domain) {
+      /**
+       * @Issue(
+       *   "Check if the fallback domain is active and log an error if not"
+       *   type="bug"
+       *   priority="low"
+       * )
+       */
       $working_domain = $fallback_domain;
     }
   }
