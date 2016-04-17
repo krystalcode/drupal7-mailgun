@@ -93,41 +93,12 @@ function mailgun_mail($key, &$message, $params) {
 }
 
 /**
- * Implements hook_libraries_info().
- */
-function mailgun_libraries_info() {
-  $libraries['mailgun'] = array(
-    'name' => 'Mailgun PHP library',
-    'vendor url' => 'https://documentation.mailgun.com/wrappers.html#php',
-    'download url' => 'https://9f67cbbd1116d8afb399-7760483f5d1e5f28c2d253278a2a5045.ssl.cf2.rackcdn.com/mailgun-php-1.7.2.zip',
-    'path' => 'vendor',
-    'version arguments' => array(
-      'file' => 'vendor/mailgun/mailgun-php/src/Mailgun/Constants/Constants.php',
-      // const SDK_VERSION = "1.7";
-      'pattern' => '/const SDK_VERSION = \"((\d+)\.(\d+))\";/',
-    ),
-    'files' => array(
-      'php' => array('autoload.php'),
-    ),
-  );
-
-  return $libraries;
-}
-
-/**
  * Get the Mailgun client to access Mailgun's endpoints.
  *
  * @param string $key
  *   The Mailgun API key. Leave empty to use the API key saved in database.
  */
 function mailgun_get_client($key = '') {
-  // Check if the Mailgun PHP library is installed.
-  $library = libraries_load('mailgun');
-  if (!$library['installed']) {
-    watchdog('mailgun', 'Mailgun client initialization failed: Unable to load the Mailgun PHP library.', NULL, WATCHDOG_ERROR);
-    return FALSE;
-  }
-
   $key = (empty($key)) ? variable_get('mailgun_api_key', '') : $key;
   if (empty($key)) {
     watchdog('mailgun', 'Mailgun client initialization failed: Missing API key.', NULL, WATCHDOG_ERROR);
