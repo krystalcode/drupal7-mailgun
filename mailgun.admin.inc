@@ -34,6 +34,13 @@ function mailgun_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('mailgun_fallback_domain'),
   );
 
+  $form['mailgun_from'] = array(
+    '#title' => t('From Email Address'),
+    '#type' => 'textfield',
+    '#description' => t('The address that all emails will be sent from, optionally in the format "Name <address@example.com>". It will be used even if a sender\'s address is specified by the module sending the email.'),
+    '#default_value' => variable_get('mailgun_from'),
+  );
+
   // Display settings only when a valid API key is present.
   if (!empty($key)) {
     $form['mailgun_queue'] = array(

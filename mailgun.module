@@ -138,6 +138,9 @@ function mailgun_get_client($key = '') {
 function mailgun_send($mailgun_message) {
   $key = variable_get('mailgun_api_key', '');
 
+  // Use the 'from' address specified in configuration, if available.
+  $mailgun_message['from'] = variable_get('mailgun_from', $mailgun_message['from']);
+
   // Extract the domain from the sender's email address. Use regular expression to check since it could be either a plain email address or in the form "Name <example@example.com>".
   $tokens = (preg_match('/^\s*(.+?)\s*<\s*([^>]+)\s*>$/', $mailgun_message['from'], $matches) === 1) ? explode('@', $matches[2]) : explode('@', $mailgun_message['from']);
   $mail_domain = array_pop($tokens);
