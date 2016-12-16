@@ -232,6 +232,12 @@ function mailgun_send($mailgun_message) {
     return FALSE;
   }
 
+  // This module is currently used only for transaction automated emails. Tag
+  // the email as such so that it can be differentiated by marketing or support
+  // emails in modules that may use the same Mailgun domain, such as the Bonsai
+  // module.
+  $mailgun_message['o:tag'] = array('transactional');
+
   try {
     if (!empty($mailgun_message['attachments'])) {
       // Send message with attachments.
